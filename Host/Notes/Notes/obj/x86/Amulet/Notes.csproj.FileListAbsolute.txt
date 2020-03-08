@@ -1,0 +1,6 @@
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\bin\Amulet\Notes.exe
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\bin\Amulet\Notes.pdb
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\bin\Amulet\JhiSharp.dll
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.csprojResolveAssemblyReference.cache
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.exe
+C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.pdb

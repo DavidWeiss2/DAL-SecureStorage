@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="com.dal.pedal.dalMainClassPackage">Notes</entry>
+<entry key="com.dal.pedal.vsVersion">VS2015</entry>
+<entry key="com.dal.pedal.dalRunOption">VS</entry>
+<entry key="com.dal.pedal.dalSupportedPlatfom">23</entry>
+<entry key="com.dal.pedal.dalUUID">64146226-a01b-4bec-a6cc-6056cee6f093</entry>
+<entry key="com.dal.pedal.dalProjectVersion">DAL_9</entry>
+<entry key="com.dal.pedal.dalMainClassName">Notes</entry>
+<entry key="com.dal.pedal.dalHostProjectLocation">C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes</entry>
+<entry key="com.dal.pedal.dalActiveManifest">23</entry>
+<entry key="com.dal.pedal.dalHostProjectName">Notes</entry>
+</properties>

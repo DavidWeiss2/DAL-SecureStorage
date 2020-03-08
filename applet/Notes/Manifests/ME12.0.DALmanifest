@@ -1,0 +1,14 @@
+applet.id: 64146226-a01b-4bec-a6cc-6056cee6f093
+applet.name: Notes
+applet.vendor: Intel
+applet.version: 1.0
+security.version: 1
+applet.heap.size: 50000
+applet.platform: CSE
+applet.api.level: 9
+applet.description: This is the Notes applet
+applet.entry_class: Notes.Notes
+applet.flash.quota: 256
+applet.debug.enable: true
+applet.written.by.intel: true
+applet.access.control: 000000000000ffff
