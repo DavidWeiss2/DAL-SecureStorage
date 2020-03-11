@@ -1,7 +1,7 @@
 package Notes;
 
 import com.intel.util.*;
-import Notes.secureStorage.*;
+import Notes.SecureStorage.*;
 
 //
 // Implementation of DAL Trusted Application: Notes 
@@ -11,6 +11,8 @@ import Notes.secureStorage.*;
 // **************************************************************************************************
 
 public class Notes extends IntelApplet {
+    int readCMD = 0, writeCMD = 1;
+
 
 	/**
 	 * This method will be called by the VM when a new session is opened to the Trusted Application 
@@ -38,7 +40,8 @@ public class Notes extends IntelApplet {
 	 * @return	the return value should not be used by the applet
 	 */
 	public int invokeCommand(int commandId, byte[] request) {
-		request = secureStorage.extractFSInfoFromBuffer(request);
+		SecureStorage
+		request = SecureStorage.extractFSInfoFromBuffer(request);
 		
 		DebugPrint.printString("Received command Id: " + commandId + ".");
 		if(request != null)

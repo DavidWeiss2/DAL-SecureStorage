@@ -29,6 +29,11 @@ namespace Notes
                 if (existFiles == null)
                 {
                     existFiles = new List<UInt32>();
+                    foreach (var fileP in Directory.GetFiles(dirPath))
+                        if (Path.GetFileName(fileP
+                    {
+
+                    }
                     // todo go over the content of dirPath and add the fileNames (only numbers) to the list
                 }
                 return existFiles;
@@ -95,6 +100,26 @@ namespace Notes
             // todo
             throw new NotImplementedException();
         }
+
+        private void deleteFiles(params UInt32[] fileNames)
+        {
+            foreach (var fileName in fileNames)
+                File.Delete(Path.Combine(this.dirPath, fileName.ToString()));
+        }
+
+        private void writeFile(UInt32 fileName, byte[] data)
+        {
+            File.WriteAllBytes(Path.Combine(this.dirPath, fileName.ToString()), data);
+        }
+
+        private byte[] readFile(UInt32 fileName)
+        {
+            return File.ReadAllBytes(Path.Combine(this.dirPath, fileName.ToString()));
+        }
+
+
+
+
         private byte[] UintToByteArray(UInt32 value) // big endian
         {
             return new byte[] { (byte)(value >> 0x18), (byte)(value >> 0x10), (byte)(value >> 8), (byte)value };

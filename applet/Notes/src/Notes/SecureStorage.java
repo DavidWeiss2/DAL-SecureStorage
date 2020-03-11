@@ -6,7 +6,7 @@ import com.intel.langutil.List;
 import com.intel.langutil.TypeConverter;
 import java.util.Hashtable;
 
-public class secureStorage {
+public class SecureStorage {
 	int[] FS;
 	Hashtable<Integer, byte[]> loadedFiles;
 
@@ -30,7 +30,7 @@ public class secureStorage {
 				loadedFiles.put(fileName, file);
 				offset += (8 + fileLen);
 			}
-			int userRequestLen = request.length - (offset + 1);
+			int userRequestLen = request.length - offset;
 			userRequest = new byte[userRequestLen];
 			ArrayUtils.copyByteArray(request, offset, userRequest, 0, userRequestLen);
 		}

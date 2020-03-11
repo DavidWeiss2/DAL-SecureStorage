@@ -29,7 +29,8 @@ namespace Notes
             //The UUID is the same value as the applet.id field in the Intel(R) DAL Trusted Application manifest.
             string appletID = "64146226-a01b-4bec-a6cc-6056cee6f093";
             // This is the path to the Intel Intel(R) DAL Trusted Application .dalp file that was created by the Intel(R) DAL Eclipse plug-in.
-            string appletPath = "C:\\Users\\frankela\\source\\repos\\DAL-SecureStorage\\applet\\Notes\\bin\\Notes.dalp";
+            string appletPath = "C:\\Users\\" + Environment.UserName + "\\source\\repos\\DAL-SecureStorage\\applet\\Notes\\bin\\Notes.dalp";
+            //string appletPath = "C:\\Users\\frankela\\source\\repos\\DAL-SecureStorage\\applet\\Notes\\bin\\Notes.dalp";
 
             // Install the Trusted Application
             Console.WriteLine("Installing the applet.");
