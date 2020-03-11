@@ -38,6 +38,7 @@ public class Notes extends IntelApplet {
 	 * @return	the return value should not be used by the applet
 	 */
 	public int invokeCommand(int commandId, byte[] request) {
+		request = secureStorage.extractFSInfoFromBuffer(request);
 		
 		DebugPrint.printString("Received command Id: " + commandId + ".");
 		if(request != null)
@@ -63,8 +64,7 @@ public class Notes extends IntelApplet {
 		 * Note that calling this method more than once will reset the code previously set. 
 		 * If not set, the default response code that will be returned to SW application is 0.
 		 */
-		secureStorage.tryint = 12;
-		setResponseCode(secureStorage.tryint);
+		setResponseCode(commandId);
 
 		/*
 		 * The return value of the invokeCommand method is not guaranteed to be
