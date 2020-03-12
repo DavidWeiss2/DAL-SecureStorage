@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using Intel.Dal;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Notes
 {
@@ -25,6 +27,8 @@ namespace Notes
             Jhi jhi = Jhi.Instance;
             JhiSession session;
 
+            SecureStorage secureStorage = new SecureStorage("C:\\Users\\" + Environment.UserName + "\\source\\repos\\DAL-SecureStorage\\encryptedFiles");
+            
             // This is the UUID of this Trusted Application (TA).
             //The UUID is the same value as the applet.id field in the Intel(R) DAL Trusted Application manifest.
             string appletID = "64146226-a01b-4bec-a6cc-6056cee6f093";
@@ -41,14 +45,35 @@ namespace Notes
             Console.WriteLine("Opening a session.");
             jhi.CreateSession(appletID, JHI_SESSION_FLAGS.None, initBuffer, out session);
 
-            // Send and Receive data to/from the Trusted Application
-            byte[] sendBuff = UTF32Encoding.UTF8.GetBytes("Hello"); // A message to send to the TA
-            byte[] recvBuff = new byte[2000]; // A buffer to hold the output data from the TA
+            #region readWrite_testCase
+            int readCMD = 0, writeCMD = 1;
+
+            // write to file 42 "Hello"
+            byte[] sendBuff = new byte[9], hello = UTF32Encoding.UTF8.GetBytes("Hello");
+            UintToByteArray(42).CopyTo(sendBuff, 0);
+            hello.CopyTo(sendBuff, 4);
+            byte[] recvBuff = new byte[6]; // A buffer to hold the output data from the TA
             int responseCode; // The return value that the TA provides using the IntelApplet.setResponseCode method
-            int cmdId = 1; // The ID of the command to be performed by the TA
-            Console.WriteLine("Performing send and receive operation.");
-            jhi.SendAndRecv2(session, cmdId, sendBuff, ref recvBuff, out responseCode);
-            Console.Out.WriteLine("Response buffer is " + UTF32Encoding.UTF8.GetString(recvBuff));
+            secureStorage.SendAndRecv2(session, writeCMD, sendBuff, ref recvBuff, out responseCode, true);
+
+            // read from file 42, check that it is "Hello".
+            sendBuff = UintToByteArray(42);
+            secureStorage.SendAndRecv2(session, writeCMD, sendBuff, ref recvBuff, out responseCode, true);
+
+            // check if they are equals.
+            Debug.Assert(recvBuff.SequenceEqual(hello));
+            #endregion
+
+            #region The Original Example
+            //// Send and Receive data to/from the Trusted Application
+            //byte[] sendBuff = UTF32Encoding.UTF8.GetBytes("Hello"); // A message to send to the TA
+            //byte[] recvBuff = new byte[6]; // A buffer to hold the output data from the TA
+            //int responseCode; // The return value that the TA provides using the IntelApplet.setResponseCode method
+            //int cmdId = 1; // The ID of the command to be performed by the TA
+            //Console.WriteLine("Performing send and receive operation.");
+            //jhi.SendAndRecv2(session, cmdId, sendBuff, ref recvBuff, out responseCode);
+            //Console.Out.WriteLine("Response buffer is " + UTF32Encoding.UTF8.GetString(recvBuff));
+            #endregion
 
             // Close the session
             Console.WriteLine("Closing the session.");
@@ -61,5 +86,19 @@ namespace Notes
             Console.WriteLine("Press Enter to finish.");
             Console.Read();
         }
+
+        private static byte[] UintToByteArray(UInt32 value) // big endian
+        {
+            return new byte[] { (byte)(value >> 0x18), (byte)(value >> 0x10), (byte)(value >> 8), (byte)value };
+        }
+
+        private static int ByteArrayToInt(byte[] bytes) // big endian
+        {
+            return ((bytes[0] & 0xFF) << 24) |
+               ((bytes[1] & 0xFF) << 16) |
+               ((bytes[2] & 0xFF) << 8) |
+               ((bytes[3] & 0xFF) << 0);
+        }
+
     }
 }

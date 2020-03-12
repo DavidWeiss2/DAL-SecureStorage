@@ -40,18 +40,21 @@ public class Notes extends IntelApplet {
 	 * @return	the return value should not be used by the applet
 	 */
 	public int invokeCommand(int commandId, byte[] request) {
-		SecureStorage
-		request = SecureStorage.extractFSInfoFromBuffer(request);
+		SecureStorage secureStorage = new SecureStorage();
+		request = secureStorage.extractFSInfoFromBuffer(request);
 		
-		DebugPrint.printString("Received command Id: " + commandId + ".");
-		if(request != null)
-		{
-			DebugPrint.printString("Received buffer:");
-			DebugPrint.printBuffer(request);
+
+		switch (commandId) {
+		case readCMD:
+			
+			break;
+			
+		case readCMD:
+			
+			break;
 		}
 		
-		final byte[] myResponse = { 'O', 'K' };
-
+		
 		/*
 		 * To return the response data to the command, call the setResponse
 		 * method before returning from this method. 

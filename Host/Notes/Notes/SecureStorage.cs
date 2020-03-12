@@ -28,13 +28,13 @@ namespace Notes
             {
                 if (existFiles == null)
                 {
-                    existFiles = new List<UInt32>();
-                    foreach (var fileP in Directory.GetFiles(dirPath))
-                        if (Path.GetFileName(fileP
-                    {
-
-                    }
-                    // todo go over the content of dirPath and add the fileNames (only numbers) to the list
+                    // go over the content of dirPath and add the fileNames (only numbers) to the list
+                    string[] files = Directory.GetFiles(dirPath);
+                    existFiles = new List<UInt32>(files.Length);
+                    UInt32 fileName;
+                    foreach (var fileP in files)
+                        if (UInt32.TryParse(Path.GetFileName(fileP), out fileName))
+                            existFiles.Add(fileName);
                 }
                 return existFiles;
             }
