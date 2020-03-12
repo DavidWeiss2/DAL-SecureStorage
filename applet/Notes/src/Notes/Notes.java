@@ -1,5 +1,7 @@
 package Notes;
 
+import com.intel.langutil.ArrayUtils;
+import com.intel.langutil.TypeConverter;
 import com.intel.util.*;
 import Notes.SecureStorage.*;
 
@@ -11,7 +13,7 @@ import Notes.SecureStorage.*;
 // **************************************************************************************************
 
 public class Notes extends IntelApplet {
-    int readCMD = 0, writeCMD = 1;
+    final int readCMD = 0, writeCMD = 1;
 
 
 	/**
@@ -43,15 +45,25 @@ public class Notes extends IntelApplet {
 		SecureStorage secureStorage = new SecureStorage();
 		request = secureStorage.extractFSInfoFromBuffer(request);
 		
-
+		byte[] myResponse = new byte[0];
+		int fileName;
 		switch (commandId) {
 		case readCMD:
-			
+			fileName = TypeConverter.bytesToInt(request, 0);
+			myResponse = secureStorage.read(fileName);
 			break;
 			
-		case readCMD:
-			
+		case writeCMD:
+			fileName = TypeConverter.bytesToInt(request, 0);
+			byte[] file = new byte[request.length - 4];
+			DebugPrint.printString("is printing??? line 59 in Notes");
+			ArrayUtils.copyByteArray(request, 4, file, 0, request.length - 4);
+			DebugPrint.printString("is printing??? line 61 in Notes");
+			secureStorage.write(fileName, file);
 			break;
+		
+		default:
+			throw new IOException("unknown commandId");
 		}
 		
 		
@@ -61,6 +73,7 @@ public class Notes extends IntelApplet {
 		 * Note that calling this method more than once will 
 		 * reset the response data previously set.
 		 */
+		myResponse = secureStorage.insertFSInfoToBuffer(myResponse);
 		setResponse(myResponse, 0, myResponse.length);
 
 		/*

@@ -49,7 +49,8 @@ namespace Notes
             int readCMD = 0, writeCMD = 1;
 
             // write to file 42 "Hello"
-            byte[] sendBuff = new byte[9], hello = UTF32Encoding.UTF8.GetBytes("Hello");
+            byte[] sendBuff = new byte[9];
+            byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello");
             UintToByteArray(42).CopyTo(sendBuff, 0);
             hello.CopyTo(sendBuff, 4);
             byte[] recvBuff = new byte[6]; // A buffer to hold the output data from the TA
@@ -58,7 +59,7 @@ namespace Notes
 
             // read from file 42, check that it is "Hello".
             sendBuff = UintToByteArray(42);
-            secureStorage.SendAndRecv2(session, writeCMD, sendBuff, ref recvBuff, out responseCode, true);
+            secureStorage.SendAndRecv2(session, readCMD, sendBuff, ref recvBuff, out responseCode, true, 42);
 
             // check if they are equals.
             Debug.Assert(recvBuff.SequenceEqual(hello));

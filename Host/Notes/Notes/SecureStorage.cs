@@ -42,11 +42,11 @@ namespace Notes
         }
 
 
-        public void SendAndRecv2(JhiSession Session, int nCommandId, byte[] InBuf, ref byte[] OutBuf, out int ResponseCode, bool enableWrite = false, UInt32[] filesNameToSend = null)
+        public void SendAndRecv2(JhiSession Session, int nCommandId, byte[] InBuf, ref byte[] OutBuf, out int ResponseCode, bool enableWrite = false, params UInt32[] filesNameToSend)
         {
             InBuf = insertFSInfoToBuffer(InBuf, enableWrite, filesNameToSend);
             jhi.SendAndRecv2(Session, nCommandId, InBuf, ref OutBuf, out ResponseCode);
-            OutBuf = HandleReturnadData();
+            OutBuf = HandleReturnadData(OutBuf);
         }
 
         private byte[] insertFSInfoToBuffer(byte[] inBuf, bool enableWrite, UInt32[] filesNameToSend)
@@ -95,8 +95,24 @@ namespace Notes
             return files;
         }
 
-        private byte[] HandleReturnadData()
+        private byte[] HandleReturnadData(byte[] bufferFromDal)
         {
+            int filesToDelete_n = ByteArrayToInt(bufferFromDal);
+            int modifiedFiles_n = ByteArrayToInt(bufferFromDal, 4);
+            int offset;
+
+            //delete files
+            for (offset = 8; offset < 8 + 4 * filesToDelete_n; offset += 4)
+                deleteFiles((UInt32)ByteArrayToInt(bufferFromDal, offset));
+
+            for (int i = 0; i < modifiedFiles_n; i++)
+            {
+                int fileName = ByteArrayToInt(bufferFromDal, offset);
+                int fileLen = ByteArrayToInt(bufferFromDal, offset + 4);
+                //byte[] file = new byte[fileLen];
+                writeFile((UInt32)fileName, bufferFromDal, offset, fileLen);
+                offset += (8 + fileLen);
+            }
             // todo
             throw new NotImplementedException();
         }
@@ -107,9 +123,13 @@ namespace Notes
                 File.Delete(Path.Combine(this.dirPath, fileName.ToString()));
         }
 
-        private void writeFile(UInt32 fileName, byte[] data)
+        private void writeFile(UInt32 fileName, byte[] data, int offset = 0, int? count = null)
         {
-            File.WriteAllBytes(Path.Combine(this.dirPath, fileName.ToString()), data);
+            if (count == null)
+                File.WriteAllBytes(Path.Combine(this.dirPath, fileName.ToString()), data);
+            else
+                using (FileStream fs = File.Create(Path.Combine(this.dirPath, fileName.ToString())))
+                    fs.Write(data, offset, (int)count);
         }
 
         private byte[] readFile(UInt32 fileName)
@@ -125,12 +145,12 @@ namespace Notes
             return new byte[] { (byte)(value >> 0x18), (byte)(value >> 0x10), (byte)(value >> 8), (byte)value };
         }
 
-        private int ByteArrayToInt(byte[] bytes) // big endian
+        private int ByteArrayToInt(byte[] bytes, int offset = 0) // big endian
         {
-            return ((bytes[0] & 0xFF) << 24) |
-               ((bytes[1] & 0xFF) << 16) |
-               ((bytes[2] & 0xFF) << 8) |
-               ((bytes[3] & 0xFF) << 0);
+            return ((bytes[offset] & 0xFF) << 24) |
+               ((bytes[offset + 1] & 0xFF) << 16) |
+               ((bytes[offset + 2] & 0xFF) << 8) |
+               ((bytes[offset + 3] & 0xFF) << 0);
         }
     }
 }

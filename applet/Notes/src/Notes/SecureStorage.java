@@ -1,17 +1,20 @@
 package Notes;
 
+import com.intel.util.DebugPrint;
 import com.intel.util.IOException;
 import com.intel.langutil.ArrayUtils;
 import com.intel.langutil.List;
 import com.intel.langutil.TypeConverter;
 import java.util.Hashtable;
+import java.util.*; 
 
 public class SecureStorage {
-	Hashtable<Integer, Boolean> existingFiles;
-	Hashtable<Integer, byte[]> loadedFiles;
+	Hashtable<Integer, Boolean> existingFiles;  // the original FS (list of file names).
+	Hashtable<Integer, byte[]> loadedFiles;  // the loaded files.
 	
-	Hashtable<Integer, Boolean> filesToDelete; // list of deleted files.
-	Hashtable<Integer, Boolean> modifiedFiles; // list of modified files.
+	Hashtable<Integer, Boolean> newFiles = new Hashtable<Integer, Boolean>(); // list of modified files that where not in the original FS.
+	Hashtable<Integer, Boolean> filesToDelete = new Hashtable<Integer, Boolean>(); // list of deleted files.
+	Hashtable<Integer, Boolean> modifiedFiles = new Hashtable<Integer, Boolean>(); // list of modified files.
 
 
 	public byte[] extractFSInfoFromBuffer(byte[] request) {
@@ -49,6 +52,49 @@ public class SecureStorage {
 		return userRequest;
 	}
 	
+	public byte[] insertFSInfoToBuffer(byte[] response) {
+		//calculate buffer size
+		int filesToDelete_n = filesToDelete.size();
+		int modifiedFiles_n = modifiedFiles.size();
+		int bufferSize = 8 + filesToDelete_n + 8 * modifiedFiles_n + response.length;
+		Enumeration<Integer> modifiedFiles_list = modifiedFiles.keys();
+		while (modifiedFiles_list.hasMoreElements())
+			bufferSize += loadedFiles.get(modifiedFiles_list.nextElement()).length;
+		byte[] result = new byte[bufferSize];
+		
+		// *** insert the data ***
+		// the header
+		TypeConverter.intToBytes(filesToDelete_n, result, 0);
+		TypeConverter.intToBytes(modifiedFiles_n, result, 4);
+		
+		// list of file names to delete
+		int offset = 8;
+		Enumeration<Integer> filesToDelete_list = filesToDelete.keys();
+		while (filesToDelete_list.hasMoreElements()) {
+			TypeConverter.intToBytes(filesToDelete_list.nextElement(), result, offset);
+			offset += 4;
+		}
+		
+		// the modified files (name, length, data)
+		modifiedFiles_list = modifiedFiles.keys();
+		while (modifiedFiles_list.hasMoreElements()) {
+			DebugPrint.printString("offset: " + offset);
+			int fileName = modifiedFiles_list.nextElement();
+			byte[] file = loadedFiles.get(fileName);
+			int fileLen = file.length;
+			TypeConverter.intToBytes(fileName, result, offset);
+			TypeConverter.intToBytes(fileLen, result, offset + 4);
+			DebugPrint.printString("offset + 8 + fileLen = " + (offset + 8 + fileLen));
+			ArrayUtils.copyByteArray(file, 0, result, offset + 8, fileLen);
+			offset += (8 + fileLen);
+		}
+		// the user buffer
+		ArrayUtils.copyByteArray(response, 0, result, offset, response.length);
+		DebugPrint.printString("is printing??? 93 in SS");
+
+	 return	result;
+	}
+	
 	public byte[] read(int fileName) {
 		if (!existingFiles.containsKey(fileName))
 			throw new IOException("The file " + String.valueOf(fileName) + " doesn't exists.");
@@ -60,6 +106,9 @@ public class SecureStorage {
 	public void write(int fileName, byte[] file) {
 		if (existingFiles.containsKey(fileName))
 			throw new IOException("The file " + String.valueOf(fileName) + " already exists.");
+		else if (!filesToDelete.containsKey(fileName))
+			newFiles.put(fileName, true);
+			
 		loadedFiles.put(fileName, encrypt(file));
 		existingFiles.put(fileName, true);
 		modifiedFiles.put(fileName, true);
@@ -68,10 +117,13 @@ public class SecureStorage {
 	public void delete(int fileName) {
 		if (!existingFiles.containsKey(fileName))
 			throw new IOException("The file " + String.valueOf(fileName) + " doesn't exists.");
+		
+		if (!newFiles.containsKey(fileName))
+			filesToDelete.put(fileName, true);
+		
 		existingFiles.remove(fileName);
 		loadedFiles.remove(fileName);
 		modifiedFiles.remove(fileName);
-		filesToDelete.put(fileName, true);
 	}
 	
 	
