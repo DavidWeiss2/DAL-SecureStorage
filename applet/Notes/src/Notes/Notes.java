@@ -60,6 +60,8 @@ public class Notes extends IntelApplet {
 			ArrayUtils.copyByteArray(request, 4, file, 0, request.length - 4);
 			DebugPrint.printString("is printing??? line 61 in Notes");
 			secureStorage.write(fileName, file);
+			DebugPrint.printString("is printing??? line 63 in Notes");
+
 			break;
 		
 		default:

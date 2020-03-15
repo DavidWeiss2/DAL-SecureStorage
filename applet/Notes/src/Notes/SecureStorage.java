@@ -91,6 +91,23 @@ public class SecureStorage {
 		// the user buffer
 		ArrayUtils.copyByteArray(response, 0, result, offset, response.length);
 		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 93 in SS");
+		DebugPrint.printString("is printing??? 110 in SS");
 
 	 return	result;
 	}
@@ -104,6 +121,9 @@ public class SecureStorage {
 	}
 	
 	public void write(int fileName, byte[] file) {
+		DebugPrint.printString("is printing??? line 107 in SS");
+		DebugPrint.printString("file.length = " + file.length);
+		DebugPrint.printString("file = " + file);
 		if (existingFiles.containsKey(fileName))
 			throw new IOException("The file " + String.valueOf(fileName) + " already exists.");
 		else if (!filesToDelete.containsKey(fileName))
