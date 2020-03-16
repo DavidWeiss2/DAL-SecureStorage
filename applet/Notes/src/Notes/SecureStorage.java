@@ -91,23 +91,6 @@ public class SecureStorage {
 		// the user buffer
 		ArrayUtils.copyByteArray(response, 0, result, offset, response.length);
 		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 93 in SS");
-		DebugPrint.printString("is printing??? 110 in SS");
 
 	 return	result;
 	}

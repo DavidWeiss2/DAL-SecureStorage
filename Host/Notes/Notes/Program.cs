@@ -45,16 +45,26 @@ namespace Notes
             Console.WriteLine("Opening a session.");
             jhi.CreateSession(appletID, JHI_SESSION_FLAGS.None, initBuffer, out session);
 
-            #region readWrite_testCase
-            int readCMD = 0, writeCMD = 1;
+            int readCMD = 0, writeCMD = 1, seyHiCMD = 2;
+            byte[] sendBuff;
+            byte[] recvBuff;
+            int responseCode;
 
+            #region Hi
+            sendBuff = new byte[0];
+            recvBuff = new byte[6];
+            secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
+            Console.WriteLine(recvBuff);
+            #endregion
+
+
+            #region readWrite_testCase
             // write to file 42 "Hello"
-            byte[] sendBuff = new byte[9];
+            sendBuff = new byte[9];
             byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello");
             UintToByteArray(42).CopyTo(sendBuff, 0);
             hello.CopyTo(sendBuff, 4);
-            byte[] recvBuff = new byte[6]; // A buffer to hold the output data from the TA
-            int responseCode; // The return value that the TA provides using the IntelApplet.setResponseCode method
+            recvBuff = new byte[6]; // A buffer to hold the output data from the TA
             secureStorage.SendAndRecv2(session, writeCMD, sendBuff, ref recvBuff, out responseCode, true);
 
             // read from file 42, check that it is "Hello".
@@ -64,6 +74,7 @@ namespace Notes
             // check if they are equals.
             Debug.Assert(recvBuff.SequenceEqual(hello));
             #endregion
+
 
             #region The Original Example
             //// Send and Receive data to/from the Trusted Application

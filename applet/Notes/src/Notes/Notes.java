@@ -13,8 +13,8 @@ import Notes.SecureStorage.*;
 // **************************************************************************************************
 
 public class Notes extends IntelApplet {
-    final int readCMD = 0, writeCMD = 1;
-
+    final int readCMD = 0, writeCMD = 1, seyHiCMD = 2;
+    final byte[] Hi = {};
 
 	/**
 	 * This method will be called by the VM when a new session is opened to the Trusted Application 
@@ -45,7 +45,7 @@ public class Notes extends IntelApplet {
 		SecureStorage secureStorage = new SecureStorage();
 		request = secureStorage.extractFSInfoFromBuffer(request);
 		
-		byte[] myResponse = new byte[0];
+		byte[] myResponse = new byte[100];
 		int fileName;
 		switch (commandId) {
 		case readCMD:
@@ -61,9 +61,13 @@ public class Notes extends IntelApplet {
 			DebugPrint.printString("is printing??? line 61 in Notes");
 			secureStorage.write(fileName, file);
 			DebugPrint.printString("is printing??? line 63 in Notes");
-
 			break;
-		
+			
+		case seyHiCMD:
+			DebugPrint.printString("is printing??? line 67 in Notes");
+			myResponse = Hi;
+			break;
+			
 		default:
 			throw new IOException("unknown commandId");
 		}
@@ -76,6 +80,7 @@ public class Notes extends IntelApplet {
 		 * reset the response data previously set.
 		 */
 		myResponse = secureStorage.insertFSInfoToBuffer(myResponse);
+		DebugPrint.printString("is printing??? line 83 in Notes");
 		setResponse(myResponse, 0, myResponse.length);
 
 		/*
@@ -93,6 +98,7 @@ public class Notes extends IntelApplet {
 		 * this purpose. Trusted Application is expected to return APPLET_SUCCESS code 
 		 * from this method and use the setResposeCode method instead.
 		 */
+		DebugPrint.printString("is printing??? line 101 in Notes");
 		return APPLET_SUCCESS;
 	}
 

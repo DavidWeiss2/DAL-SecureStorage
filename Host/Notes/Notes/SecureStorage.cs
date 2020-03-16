@@ -52,7 +52,7 @@ namespace Notes
         private byte[] insertFSInfoToBuffer(byte[] inBuf, bool enableWrite, UInt32[] filesNameToSend)
         {
             byte[] result;
-            if (enableWrite || filesNameToSend.Count() == 0)  // enableWrite, send FS.
+            if (enableWrite || filesNameToSend.Count() != 0)  // enableWrite, send FS.
             {
                 List<UInt32> fs = ExistFiles;
                 List<KeyValuePair<UInt32, byte[]>> filesToSend = loadFiles(filesNameToSend);
