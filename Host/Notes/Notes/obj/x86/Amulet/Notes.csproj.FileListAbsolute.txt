@@ -4,3 +4,5 @@ C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\bin\Amulet\Jhi
 C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.csprojResolveAssemblyReference.cache
 C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.exe
 C:\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.pdb
+C:\Users\david\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.exe
+C:\Users\david\source\repos\DAL-SecureStorage\Host\Notes\Notes\obj\x86\Amulet\Notes.pdb

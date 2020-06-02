@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes", "..\..\..\..\..\..\..\Users\frankela\source\repos\DAL-SecureStorage\Host\Notes\Notes\Notes.csproj", "{1037B1A6-301A-4D04-9457-02046C3933B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notes", "Notes\Notes.csproj", "{1037B1A6-301A-4D04-9457-02046C3933B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
