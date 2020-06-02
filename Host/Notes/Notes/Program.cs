@@ -51,8 +51,8 @@ namespace Notes
             int responseCode;
 
             #region Hi
-            sendBuff = new byte[0];
-            recvBuff = new byte[6];
+            sendBuff = new byte[0 + 50];  //todo - what is the correcr nedded size?
+            recvBuff = new byte[6 + 50];
             secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
             Console.WriteLine(recvBuff);
             #endregion

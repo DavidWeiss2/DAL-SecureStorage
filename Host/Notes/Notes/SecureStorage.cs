@@ -109,12 +109,15 @@ namespace Notes
             {
                 int fileName = ByteArrayToInt(bufferFromDal, offset);
                 int fileLen = ByteArrayToInt(bufferFromDal, offset + 4);
-                //byte[] file = new byte[fileLen];
                 writeFile((UInt32)fileName, bufferFromDal, offset, fileLen);
                 offset += (8 + fileLen);
             }
-            // todo
-            throw new NotImplementedException();
+
+            //receive the user buffer.
+            int userBuffLen = bufferFromDal.Length - offset;
+            byte[] userBuff = new byte[userBuffLen];
+            Array.Copy(bufferFromDal, offset, userBuff, 0, userBuffLen);
+            return userBuff;
         }
 
         private void deleteFiles(params UInt32[] fileNames)
