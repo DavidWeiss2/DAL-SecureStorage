@@ -14,7 +14,7 @@ import Notes.SecureStorage.*;
 
 public class Notes extends IntelApplet {
     final int readCMD = 0, writeCMD = 1, seyHiCMD = 2;
-    final byte[] Hi = {};
+    final byte[] Hi = {'H', 'I'};
 
 	/**
 	 * This method will be called by the VM when a new session is opened to the Trusted Application 
@@ -29,7 +29,7 @@ public class Notes extends IntelApplet {
 	 * 		treated similarly by the VM by sending "cancel" error code to the SW application).
 	 */
 	public int onInit(byte[] request) {
-		DebugPrint.printString("Hello, DAL!");
+		DebugPrint.printString("onInit, Hello, DAL!");
 		return APPLET_SUCCESS;
 	}
 	
@@ -51,20 +51,20 @@ public class Notes extends IntelApplet {
 		case readCMD:
 			fileName = TypeConverter.bytesToInt(request, 0);
 			myResponse = secureStorage.read(fileName);
+			DebugPrint.printString("In Notes readCMD. fileName = " + fileName + ", file = " + new String(myResponse));  //TODO delete
 			break;
 			
 		case writeCMD:
 			fileName = TypeConverter.bytesToInt(request, 0);
 			byte[] file = new byte[request.length - 4];
-			DebugPrint.printString("is printing??? line 59 in Notes");
 			ArrayUtils.copyByteArray(request, 4, file, 0, request.length - 4);
-			DebugPrint.printString("is printing??? line 61 in Notes");
 			secureStorage.write(fileName, file);
-			DebugPrint.printString("is printing??? line 63 in Notes");
+			DebugPrint.printString("In Notes writeCMD. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
+
 			break;
 			
 		case seyHiCMD:
-			DebugPrint.printString("is printing??? line 67 in Notes");
+			DebugPrint.printString("on seyHiCMD");  //TODO delete
 			myResponse = Hi;
 			break;
 			
@@ -80,7 +80,7 @@ public class Notes extends IntelApplet {
 		 * reset the response data previously set.
 		 */
 		myResponse = secureStorage.insertFSInfoToBuffer(myResponse);
-		DebugPrint.printString("is printing??? line 83 in Notes");
+		//DebugPrint.printString("is printing??? line 83 in Notes");
 		setResponse(myResponse, 0, myResponse.length);
 
 		/*
@@ -98,7 +98,7 @@ public class Notes extends IntelApplet {
 		 * this purpose. Trusted Application is expected to return APPLET_SUCCESS code 
 		 * from this method and use the setResposeCode method instead.
 		 */
-		DebugPrint.printString("is printing??? line 101 in Notes");
+		//DebugPrint.printString("is printing??? line 101 in Notes");
 		return APPLET_SUCCESS;
 	}
 
@@ -112,7 +112,7 @@ public class Notes extends IntelApplet {
 	 * @return APPLET_SUCCESS code (the status code is not used by the VM).
 	 */
 	public int onClose() {
-		DebugPrint.printString("Goodbye, DAL!");
+		//DebugPrint.printString("Goodbye, DAL!");
 		return APPLET_SUCCESS;
 	}
 }
