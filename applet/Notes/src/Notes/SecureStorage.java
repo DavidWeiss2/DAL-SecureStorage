@@ -2,13 +2,23 @@ package Notes;
 
 import com.intel.util.DebugPrint;
 import com.intel.util.IOException;
+import com.intel.util.IntelApplet;
+import com.intel.util.MTC;
+import com.intel.crypto.SymmetricBlockCipherAlg;
 import com.intel.langutil.ArrayUtils;
 import com.intel.langutil.List;
 import com.intel.langutil.TypeConverter;
 import java.util.Hashtable;
 import java.util.*; 
+import com.intel.util.*;
 
-public class SecureStorage {
+public class SecureStorage extends IntelApplet {
+
+
+	private static final int CMD_LOAD_DATA = 1;
+	private static final int CMD_SAVE_DATA = 2;
+	private static final int CMD_RESET_MTC = 3;
+	
 	Hashtable<Integer, Boolean> existingFiles;  // the original FS (list of file names).
 	Hashtable<Integer, byte[]> loadedFiles;  // the loaded files.
 	
@@ -16,6 +26,56 @@ public class SecureStorage {
 	Hashtable<Integer, Boolean> filesToDelete = new Hashtable<Integer, Boolean>(); // list of deleted files.
 	Hashtable<Integer, Boolean> modifiedFiles = new Hashtable<Integer, Boolean>(); // list of modified files.
 
+	
+	/**
+	 * This method will be called by the VM to handle a command sent to this
+	 * Trusted Application instance.
+	 * 
+	 * @param	commandId	the command ID (Trusted Application specific) 
+	 * @param	request		the input data for this command 
+	 * @return	the return value should not be used by the applet
+	 */
+	public int invokeCommand(int commandId, byte[] request) {
+		
+		DebugPrint.printString("Protected Storage TA: invokeCommand");
+		if (request != null)
+		{
+			DebugPrint.printString("Received buffer:");
+			DebugPrint.printBuffer(request);
+		}
+		DebugPrint.printString("Received command ID: " + commandId);
+
+		int res;
+		switch (commandId)
+		{
+			case CMD_LOAD_DATA:
+				res = loadData(request);
+				break;
+	
+			case CMD_SAVE_DATA:
+				res = saveData(request);
+				break;
+	
+			case CMD_RESET_MTC:
+				res = resetMTC();
+				break;
+	
+			default:
+				DebugPrint.printString("ERROR: Invalid command received.");
+				res = IntelApplet.APPLET_ERROR_BAD_PARAMETERS;
+				break;
+		}
+		
+		setResponseCode(res);
+		 
+		 /*
+		 * The return value of the invokeCommand method is not guaranteed to be
+		 * delivered to the SW application, and therefore should not be used for
+		 * this purpose. Trusted Application is expected to return APPLET_SUCCESS code 
+		 * from this method and use the setResposeCode method instead.
+		 */
+		return APPLET_SUCCESS;
+	}
 
 	public byte[] extractFSInfoFromBuffer(byte[] request) {
 		byte[] userRequest;
@@ -131,8 +191,59 @@ public class SecureStorage {
 	
 	
 	private byte[] encrypt(byte[] plainText) {
-		// todo implement
-		return plainText;
+		int status = IntelApplet.APPLET_ERROR_GENERIC;
+		try
+		{
+			if (plainText == null)
+			{
+				throw new Exception("An empty data buffer was sent.");
+			}
+			DebugPrint.printString("Received data buffer:");
+			DebugPrint.printBuffer(plainText);
+
+			// Increase the monotonic counter value to make all previous data invalid
+			MTC.incrementMTC();
+
+			// Create Platform Binded cipher
+			SymmetricBlockCipherAlg SymmetricCipher = SymmetricBlockCipherAlg.create(SymmetricBlockCipherAlg.ALG_TYPE_PBIND_AES_256_CBC);
+
+			// Data is: MTC value | buffer size | data
+			int dataSize = plainText.length + TypeConverter.INT_BYTE_SIZE * 2;
+			// Align the data size to block buffer size
+			short blockSize = SymmetricCipher.getBlockSize();
+			if (dataSize % blockSize != 0)
+				dataSize = dataSize + blockSize - (dataSize % blockSize);
+			
+			// An array to hold the data to encrypt
+			byte[] data = new byte[dataSize];
+			// An array for the encrypted data, 
+			// Data size stays the same after encryption because we are using a symmetric key
+			byte[] response = new byte[dataSize];
+
+			// First four bytes are the monotonic counter value
+			TypeConverter.intToBytes(MTC.getMTC(), data, 0);
+			// Second four bytes are the data size
+			TypeConverter.intToBytes(plainText.length, data, TypeConverter.INT_BYTE_SIZE);
+			// Then copy the data buffer to encrypt
+			ArrayUtils.copyByteArray(plainText, 0, data, TypeConverter.INT_BYTE_SIZE * 2, plainText.length);
+
+			// Encrypt the data
+			SymmetricCipher.encryptComplete(data, (short) 0, (short) dataSize, response, (short) 0);
+
+			// Return the encrypted data to the host application
+			setResponse(response, 0, dataSize);
+
+			DebugPrint.printString("Encrypted data:");
+			DebugPrint.printBuffer(response);
+
+			status = IntelApplet.APPLET_SUCCESS;
+		}
+		catch (Exception ex)
+		{
+			DebugPrint.printString("ERROR: failed to save data\n" + ex.getMessage());
+		}
+		
+		return status;
 	}
 	
 	private byte[] decrypt(byte[] cipherText) {
