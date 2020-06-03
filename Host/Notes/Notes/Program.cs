@@ -46,28 +46,29 @@ namespace Notes
             jhi.CreateSession(appletID, JHI_SESSION_FLAGS.None, initBuffer, out session);
 
             int readCMD = 0, writeCMD = 1, seyHiCMD = 2;
-            byte[] sendBuff;
-            byte[] recvBuff;
+            byte[] sendBuff = new byte[200];
+            byte[] recvBuff = new byte[200]; // A buffer to hold the output data from the TA
             int responseCode;
 
             #region Hi
-            sendBuff = new byte[0 + 50];  //todo - what is the correcr nedded size?
-            recvBuff = new byte[6 + 50];
             secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
             Console.WriteLine(recvBuff);
             #endregion
 
 
+
             #region readWrite_testCase
             // write to file 42 "Hello"
-            sendBuff = new byte[9];
-            byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello");
+            sendBuff = new byte[16];
+            recvBuff = new byte[250]; // A buffer to hold the output data from the TA
+            byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello world!");
             UintToByteArray(42).CopyTo(sendBuff, 0);
             hello.CopyTo(sendBuff, 4);
-            recvBuff = new byte[6]; // A buffer to hold the output data from the TA
             secureStorage.SendAndRecv2(session, writeCMD, sendBuff, ref recvBuff, out responseCode, true);
 
+
             // read from file 42, check that it is "Hello".
+            recvBuff = new byte[250];
             sendBuff = UintToByteArray(42);
             secureStorage.SendAndRecv2(session, readCMD, sendBuff, ref recvBuff, out responseCode, true, 42);
 

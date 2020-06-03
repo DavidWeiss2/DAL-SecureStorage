@@ -46,7 +46,7 @@ namespace Notes
         {
             InBuf = insertFSInfoToBuffer(InBuf, enableWrite, filesNameToSend);
             jhi.SendAndRecv2(Session, nCommandId, InBuf, ref OutBuf, out ResponseCode);
-            OutBuf = HandleReturnadData(OutBuf);
+            OutBuf = HandleReturnedData(OutBuf);
         }
 
         private byte[] insertFSInfoToBuffer(byte[] inBuf, bool enableWrite, UInt32[] filesNameToSend)
@@ -59,13 +59,20 @@ namespace Notes
                 //todo: Find out if it's ok to convert int and long to Uint32.
                 UInt32 totalFilesLen = (UInt32)filesToSend.Sum(p => (UInt32)p.Value.Length);
 
-                result = new byte[9 + ExistFiles.Count + totalFilesLen + filesNameToSend.Length * 8 + inBuf.Length];
+                result = new byte[9 + ExistFiles.Count * 4 + totalFilesLen + filesNameToSend.Length * 8 + inBuf.Length];
                 result[0] = (byte)1;
                 UintToByteArray((UInt32)ExistFiles.Count).CopyTo(result, 1);
                 UintToByteArray((UInt32)filesNameToSend.Length).CopyTo(result, 5);
                 UInt32 offset = 9;
-                foreach (var file in filesToSend)
+
+                foreach (var fileName in fs)  // Add the file system list.
                 {
+                    UintToByteArray(fileName).CopyTo(result, offset);
+                    offset += 4;
+                }
+
+                foreach (var file in filesToSend)
+                {  // add the three (name, length, data)
                     UintToByteArray(file.Key).CopyTo(result, offset);
                     UintToByteArray((UInt32)file.Value.Length).CopyTo(result, offset + 4);
                     file.Value.CopyTo(result, offset + 8);
@@ -79,23 +86,24 @@ namespace Notes
                 result[0] = (byte)0;
                 inBuf.CopyTo(result, 1);
             }
+            ExistFiles = null;
             return result;
         }
 
 
         private List<KeyValuePair<UInt32, byte[]>> loadFiles(UInt32[] filesNameToSend)
         {
-            List<KeyValuePair<UInt32, byte[]>> files = new List<KeyValuePair<uint, byte[]>>();  // name:file
-            foreach (int fileName in filesNameToSend)
+            List<KeyValuePair<UInt32, byte[]>> files = new List<KeyValuePair<uint, byte[]>>();  // <name:file>
+            foreach (uint fileName in filesNameToSend)
             {
                 string filePath = Path.Combine(dirPath, fileName.ToString());
-                //todo load the file and add the three (name, length, data) to the 
-                //todo add its len to totalLength
+                byte[] file = File.ReadAllBytes(filePath);
+                files.Add(new KeyValuePair<uint, byte[]>(fileName, file));
             }
             return files;
         }
 
-        private byte[] HandleReturnadData(byte[] bufferFromDal)
+        private byte[] HandleReturnedData(byte[] bufferFromDal)
         {
             int filesToDelete_n = ByteArrayToInt(bufferFromDal);
             int modifiedFiles_n = ByteArrayToInt(bufferFromDal, 4);
@@ -105,11 +113,11 @@ namespace Notes
             for (offset = 8; offset < 8 + 4 * filesToDelete_n; offset += 4)
                 deleteFiles((UInt32)ByteArrayToInt(bufferFromDal, offset));
 
-            for (int i = 0; i < modifiedFiles_n; i++)
+            for (int i = 0; i < modifiedFiles_n; i++)  // Modified files
             {
                 int fileName = ByteArrayToInt(bufferFromDal, offset);
                 int fileLen = ByteArrayToInt(bufferFromDal, offset + 4);
-                writeFile((UInt32)fileName, bufferFromDal, offset, fileLen);
+                writeFile((UInt32)fileName, bufferFromDal, offset + 8, fileLen);
                 offset += (8 + fileLen);
             }
 
@@ -139,8 +147,6 @@ namespace Notes
         {
             return File.ReadAllBytes(Path.Combine(this.dirPath, fileName.ToString()));
         }
-
-
 
 
         private byte[] UintToByteArray(UInt32 value) // big endian
