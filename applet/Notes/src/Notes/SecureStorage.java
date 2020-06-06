@@ -1,12 +1,10 @@
 package Notes;
 
-import com.intel.util.DebugPrint;
-import com.intel.util.IOException;
-import com.intel.langutil.ArrayUtils;
-import com.intel.langutil.List;
-import com.intel.langutil.TypeConverter;
+import com.intel.util.*;
+import com.intel.langutil.*;
 import java.util.Hashtable;
 import java.util.*; 
+import Notes.Crypto.*;
 
 public class SecureStorage {
 	Hashtable<Integer, Boolean> allFilesNames;  // the original FS (list of file names).
@@ -143,13 +141,11 @@ public class SecureStorage {
 	}
 	
 	private byte[] encrypt(byte[] plainText) {
-		// todo implement
-		return plainText;
+		return Crypto.encrypt(plainText);
 	}
 	
 	private byte[] decrypt(byte[] cipherText) {
-		// todo implement
-		return cipherText;
+		return Crypto.decrypt(cipherText);
 	}
 	
 

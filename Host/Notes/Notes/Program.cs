@@ -38,7 +38,15 @@ namespace Notes
 
             // Install the Trusted Application
             Console.WriteLine("Installing the applet.");
-            jhi.Install(appletID, appletPath);
+            try
+            {
+                jhi.Install(appletID, appletPath);
+            }
+            catch (Intel.Dal.JhiException)
+            {
+                appletPath = "C:\\Users\\" + Environment.UserName + "\\source\\repos\\DAL-SecureStorage\\applet\\Notes\\bin\\Notes-debug.dalp";
+                jhi.Install(appletID, appletPath);
+            }
 
             // Start a session with the Trusted Application
             byte[] initBuffer = new byte[] { }; // Data to send to the applet onInit function
@@ -59,7 +67,7 @@ namespace Notes
 
             #region readWrite_testCase
             // write to file 42 "Hello"
-            sendBuff = new byte[16];
+            sendBuff = new byte[30];
             recvBuff = new byte[250]; // A buffer to hold the output data from the TA
             byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello world!");
             UintToByteArray(42).CopyTo(sendBuff, 0);

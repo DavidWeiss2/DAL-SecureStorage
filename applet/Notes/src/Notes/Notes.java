@@ -29,7 +29,7 @@ public class Notes extends IntelApplet {
 	 * 		treated similarly by the VM by sending "cancel" error code to the SW application).
 	 */
 	public int onInit(byte[] request) {
-		DebugPrint.printString("onInit, Hello, DAL!");
+		//DebugPrint.printString("onInit, Hello, DAL!");
 		return APPLET_SUCCESS;
 	}
 	
@@ -64,7 +64,7 @@ public class Notes extends IntelApplet {
 			break;
 			
 		case seyHiCMD:
-			DebugPrint.printString("on seyHiCMD");  //TODO delete
+			//DebugPrint.printString("on seyHiCMD");  //TODO delete
 			myResponse = Hi;
 			break;
 			
