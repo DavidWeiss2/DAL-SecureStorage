@@ -12,6 +12,7 @@ import com.intel.util.DebugPrint;
  */
 public final class Crypto {
 	public static byte[] encrypt(byte[] plainText) {
+		DebugPrint.printString("on Crypto.encrypt()");
 		//Java is PITA 
 		short indexZero = (short)0;
 		
@@ -119,7 +120,10 @@ public final class Crypto {
 		//init
 		hashAlg.processComplete(plainText,indexZero,(short)plainText.length,hash,indexZero);
 		
-		if(hashSize != oldHashSize || ArrayUtils.compareByteArray(oldHash, indexZero, hash, indexZero, hashSize)) throw new CryptoException("Hash not match");
+		if(hashSize != oldHashSize || !ArrayUtils.compareByteArray(oldHash, indexZero, hash, indexZero, hashSize)) {
+			DebugPrint.printString("Hash not match");
+			throw new CryptoException("Hash not match");
+		}
 		
 		DebugPrint.printString("hash data:");
 		DebugPrint.printBuffer(hash);

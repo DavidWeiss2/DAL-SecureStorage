@@ -59,15 +59,16 @@ namespace Notes
             int responseCode;
 
             #region Hi
-            secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
-            Console.WriteLine(recvBuff);
+            //secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
+            //Console.WriteLine(recvBuff);
             #endregion
 
+            secureStorage.deleteFiles(secureStorage.ExistFiles.ToArray<uint>());
 
 
             #region readWrite_testCase
             // write to file 42 "Hello"
-            sendBuff = new byte[30];
+            sendBuff = new byte[16];
             recvBuff = new byte[250]; // A buffer to hold the output data from the TA
             byte[] hello = UTF32Encoding.UTF8.GetBytes("Hello world!");
             UintToByteArray(42).CopyTo(sendBuff, 0);

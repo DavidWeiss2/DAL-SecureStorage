@@ -10,11 +10,11 @@
 	<!-- The name of the project (in Eclipse) -->
 	<property name="project_name" 						value="Notes"/>
 	<!-- The build directory - note that the .jeff and .pack files in this directory will be deleted -->
-	<property name="bin_dir" 							location="C:\Users\david\source\repos\DAL-SecureStorage\applet\Notes\bin\ME12.0"/>
+	<property name="bin_dir" 							location="C:\Users\frankela\source\repos\DAL-SecureStorage\applet\Notes\bin\ME12.0"/>
 	<!-- Project directory -->
-	<property name="project_dir" 						value="C:/Users/david/source/repos/DAL-SecureStorage/applet/Notes"/>
+	<property name="project_dir" 						value="C:/Users/frankela/source/repos/DAL-SecureStorage/applet/Notes"/>
 	<!-- Intel DAL SDK directory -->
-	<property name="sdk_dir" 							value="C:\DALsdk\"/> 
+	<property name="sdk_dir" 							value="C:\DALsdk"/> 
 	<!-- value indicating if this is a compilation for signing -->
 	<property name="signingFlag"						value="false"/>
 	<!-- The applet's firmware version (full platform name without the firmware name) -->

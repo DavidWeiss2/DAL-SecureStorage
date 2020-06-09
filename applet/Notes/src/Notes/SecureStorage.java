@@ -52,6 +52,7 @@ public class SecureStorage {
 	}
 	
 	public byte[] insertFSInfoToBuffer(byte[] response) {
+		DebugPrint.printString("In insertFSInfoToBuffer");
 		//calculate buffer size
 		int filesToDelete_n = filesToDelete.size();
 		int modifiedFiles_n = modifiedFiles.size();
@@ -83,8 +84,8 @@ public class SecureStorage {
 			int fileLen = file.length;
 			TypeConverter.intToBytes(fileName, result, offset);
 			TypeConverter.intToBytes(fileLen, result, offset + 4);
-			DebugPrint.printString("In SS insertFSInfoToBuffer(). "
-					+ "reading modified files. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
+			//DebugPrint.printString("In SS insertFSInfoToBuffer(). "
+			//		+ "reading modified files. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
 
 			ArrayUtils.copyByteArray(file, 0, result, offset + 8, fileLen);
 			offset += (8 + fileLen);
