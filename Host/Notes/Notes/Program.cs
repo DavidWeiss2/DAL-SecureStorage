@@ -38,7 +38,15 @@ namespace Notes
 
             // Install the Trusted Application
             Console.WriteLine("Installing the applet.");
-            jhi.Install(appletID, appletPath);
+            try
+            {
+                jhi.Install(appletID, appletPath);
+            }
+            catch (Intel.Dal.JhiException)
+            {
+                appletPath = "C:\\Users\\" + Environment.UserName + "\\source\\repos\\DAL-SecureStorage\\applet\\Notes\\bin\\Notes-debug.dalp";
+                jhi.Install(appletID, appletPath);
+            }
 
             // Start a session with the Trusted Application
             byte[] initBuffer = new byte[] { }; // Data to send to the applet onInit function
@@ -51,10 +59,11 @@ namespace Notes
             int responseCode;
 
             #region Hi
-            secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
-            Console.WriteLine(recvBuff);
+            //secureStorage.SendAndRecv2(session, seyHiCMD, sendBuff, ref recvBuff, out responseCode);
+            //Console.WriteLine(recvBuff);
             #endregion
 
+            secureStorage.deleteFiles(secureStorage.ExistFiles.ToArray<uint>());
 
 
             #region readWrite_testCase

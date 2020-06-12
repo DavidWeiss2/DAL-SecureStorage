@@ -1,12 +1,10 @@
 package Notes;
 
-import com.intel.util.DebugPrint;
-import com.intel.util.IOException;
-import com.intel.langutil.ArrayUtils;
-import com.intel.langutil.List;
-import com.intel.langutil.TypeConverter;
+import com.intel.util.*;
+import com.intel.langutil.*;
 import java.util.Hashtable;
 import java.util.*; 
+import Notes.Crypto.*;
 
 public class SecureStorage {
 	Hashtable<Integer, Boolean> allFilesNames;  // the original FS (list of file names).
@@ -49,11 +47,12 @@ public class SecureStorage {
 		}
 		else // unknown code
 			throw new IOException("When using SecureStorage, you must also use it on the Host side.");
-		DebugPrint.printString("exiting extractFSInfoFromBuffer()." );
+		//DebugPrint.printString("exiting extractFSInfoFromBuffer()." );
 		return userRequest;
 	}
 	
 	public byte[] insertFSInfoToBuffer(byte[] response) {
+		//DebugPrint.printString("In insertFSInfoToBuffer");
 		//calculate buffer size
 		int filesToDelete_n = filesToDelete.size();
 		int modifiedFiles_n = modifiedFiles.size();
@@ -79,32 +78,32 @@ public class SecureStorage {
 		// the modified files (name, length, data)
 		modifiedFiles_list = modifiedFiles.keys();
 		while (modifiedFiles_list.hasMoreElements()) {
-			DebugPrint.printString("offset: " + offset);
+			//DebugPrint.printString("offset: " + offset);
 			int fileName = modifiedFiles_list.nextElement();
 			byte[] file = files.get(fileName);
 			int fileLen = file.length;
 			TypeConverter.intToBytes(fileName, result, offset);
 			TypeConverter.intToBytes(fileLen, result, offset + 4);
-			DebugPrint.printString("In SS insertFSInfoToBuffer(). "
-					+ "reading modified files. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
+			//DebugPrint.printString("In SS insertFSInfoToBuffer(). "
+			//		+ "reading modified files. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
 
 			ArrayUtils.copyByteArray(file, 0, result, offset + 8, fileLen);
 			offset += (8 + fileLen);
 		}
 		// the user buffer
 		ArrayUtils.copyByteArray(response, 0, result, offset, response.length);
-		DebugPrint.printString("exiting insertFSInfoToBuffer()." );
+		//DebugPrint.printString("exiting insertFSInfoToBuffer()." );
 
 		return	result;
 	}
 	
 	public byte[] read(int fileName) {
-		DebugPrint.printString("read() in SS");
-		DebugPrint.printString("allFilesNames.size() = " + allFilesNames.size());
+		//DebugPrint.printString("read() in SS");
+		//DebugPrint.printString("allFilesNames.size() = " + allFilesNames.size());
 		//debug
-		Enumeration<Integer> allFiles = allFilesNames.keys();
-		while (allFiles.hasMoreElements())
-			DebugPrint.printString("found file " + allFiles.nextElement());
+		//Enumeration<Integer> allFiles = allFilesNames.keys();
+		//while (allFiles.hasMoreElements())
+		//	DebugPrint.printString("found file " + allFiles.nextElement());
 
 		
 		
@@ -112,14 +111,14 @@ public class SecureStorage {
 			throw new IOException("The file " + fileName + " doesn't exists.");
 		else if (!files.containsKey(fileName))
 			throw new IOException("The file " + fileName + " doesn't loaded.");
-		DebugPrint.printString("exiting SS read()." );
+		//DebugPrint.printString("exiting SS read()." );
 		return decrypt(files.get(fileName));
 	}
 	
 	public void write(int fileName, byte[] file) {
-		DebugPrint.printString("write() in SS");
-		DebugPrint.printString("file.length = " + file.length);
-		DebugPrint.printString("file = " + new String(file));
+		//DebugPrint.printString("write() in SS");
+		//DebugPrint.printString("file.length = " + file.length);
+		//DebugPrint.printString("file = " + new String(file));
 		if (allFilesNames.containsKey(fileName))
 			throw new IOException("The file " + fileName + " already exists.");
 		else if (!filesToDelete.containsKey(fileName))
@@ -143,13 +142,11 @@ public class SecureStorage {
 	}
 	
 	private byte[] encrypt(byte[] plainText) {
-		// todo implement
-		return plainText;
+		return Crypto.encrypt(plainText);
 	}
 	
 	private byte[] decrypt(byte[] cipherText) {
-		// todo implement
-		return cipherText;
+		return Crypto.decrypt(cipherText);
 	}
 	
 

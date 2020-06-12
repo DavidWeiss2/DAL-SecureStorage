@@ -21,24 +21,20 @@ namespace Notes
             { }
         }
 
-        private List<UInt32> existFiles = null;
         public List<UInt32> ExistFiles
         {
             get
             {
-                if (existFiles == null)
-                {
-                    // go over the content of dirPath and add the fileNames (only numbers) to the list
-                    string[] files = Directory.GetFiles(dirPath);
-                    existFiles = new List<UInt32>(files.Length);
-                    UInt32 fileName;
-                    foreach (var fileP in files)
-                        if (UInt32.TryParse(Path.GetFileName(fileP), out fileName))
-                            existFiles.Add(fileName);
-                }
+                List<UInt32> existFiles = null;
+                // go over the content of dirPath and add the fileNames (only numbers) to the list
+                string[] files = Directory.GetFiles(dirPath);
+                existFiles = new List<UInt32>(files.Length);
+                UInt32 fileName;
+                foreach (var fileP in files)
+                    if (UInt32.TryParse(Path.GetFileName(fileP), out fileName))
+                        existFiles.Add(fileName);
                 return existFiles;
             }
-            private set { existFiles = null; }
         }
 
 
@@ -54,14 +50,15 @@ namespace Notes
             byte[] result;
             if (enableWrite || filesNameToSend.Count() != 0)  // enableWrite, send FS.
             {
-                List<UInt32> fs = ExistFiles;
+                List<UInt32> existFiles = ExistFiles;
+                List <UInt32> fs = existFiles;
                 List<KeyValuePair<UInt32, byte[]>> filesToSend = loadFiles(filesNameToSend);
                 //todo: Find out if it's ok to convert int and long to Uint32.
                 UInt32 totalFilesLen = (UInt32)filesToSend.Sum(p => (UInt32)p.Value.Length);
 
-                result = new byte[9 + ExistFiles.Count * 4 + totalFilesLen + filesNameToSend.Length * 8 + inBuf.Length];
+                result = new byte[9 + existFiles.Count * 4 + totalFilesLen + filesNameToSend.Length * 8 + inBuf.Length];
                 result[0] = (byte)1;
-                UintToByteArray((UInt32)ExistFiles.Count).CopyTo(result, 1);
+                UintToByteArray((UInt32)existFiles.Count).CopyTo(result, 1);
                 UintToByteArray((UInt32)filesNameToSend.Length).CopyTo(result, 5);
                 UInt32 offset = 9;
 
@@ -86,7 +83,6 @@ namespace Notes
                 result[0] = (byte)0;
                 inBuf.CopyTo(result, 1);
             }
-            ExistFiles = null;
             return result;
         }
 
@@ -128,7 +124,7 @@ namespace Notes
             return userBuff;
         }
 
-        private void deleteFiles(params UInt32[] fileNames)
+        public void deleteFiles(params UInt32[] fileNames)
         {
             foreach (var fileName in fileNames)
                 File.Delete(Path.Combine(this.dirPath, fileName.ToString()));

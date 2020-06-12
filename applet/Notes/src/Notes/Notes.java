@@ -3,7 +3,6 @@ package Notes;
 import com.intel.langutil.ArrayUtils;
 import com.intel.langutil.TypeConverter;
 import com.intel.util.*;
-import Notes.SecureStorage.*;
 
 //
 // Implementation of DAL Trusted Application: Notes 
@@ -29,7 +28,7 @@ public class Notes extends IntelApplet {
 	 * 		treated similarly by the VM by sending "cancel" error code to the SW application).
 	 */
 	public int onInit(byte[] request) {
-		DebugPrint.printString("onInit, Hello, DAL!");
+		//DebugPrint.printString("onInit, Hello, DAL!");
 		return APPLET_SUCCESS;
 	}
 	
@@ -51,7 +50,7 @@ public class Notes extends IntelApplet {
 		case readCMD:
 			fileName = TypeConverter.bytesToInt(request, 0);
 			myResponse = secureStorage.read(fileName);
-			DebugPrint.printString("In Notes readCMD. fileName = " + fileName + ", file = " + new String(myResponse));  //TODO delete
+			//DebugPrint.printString("In Notes readCMD. fileName = " + fileName + ", file = " + new String(myResponse));  //TODO delete
 			break;
 			
 		case writeCMD:
@@ -59,12 +58,12 @@ public class Notes extends IntelApplet {
 			byte[] file = new byte[request.length - 4];
 			ArrayUtils.copyByteArray(request, 4, file, 0, request.length - 4);
 			secureStorage.write(fileName, file);
-			DebugPrint.printString("In Notes writeCMD. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
+			//DebugPrint.printString("In Notes writeCMD. fileName = " + fileName + ", file = " + new String(file));  //TODO delete
 
 			break;
 			
 		case seyHiCMD:
-			DebugPrint.printString("on seyHiCMD");  //TODO delete
+			//DebugPrint.printString("on seyHiCMD");  //TODO delete
 			myResponse = Hi;
 			break;
 			
